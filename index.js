@@ -1,21 +1,23 @@
 require("dotenv").config();
 const { Bot, InlineKeyboard, Keyboard } = require("grammy");
+const cron = require("node-cron");
 
 const bot = new Bot(process.env.BOT_TOKEN);
 
 /* ================= HELPERS ================= */
 
-async function getUserFromDB(telegramId) {
+async function getAllUsersFromDB() {
     const res = await fetch(
         "https://proxy-settings-ab0da-default-rtdb.europe-west1.firebasedatabase.app/users.json"
     );
-
     const users = await res.json();
-    if (!users) return null;
+    if (!users) return [];
+    return Object.values(users);
+}
 
-    return Object.values(users).find(
-        (user) => user.id === String(telegramId)
-    );
+async function getUserFromDB(telegramId) {
+    const users = await getAllUsersFromDB();
+    return users.find((user) => user.id === String(telegramId)) || null;
 }
 
 /* ================= ACCESS ================= */
@@ -141,6 +143,37 @@ bot.callbackQuery("ALFA", async (ctx) => {
     });
     await ctx.answerCallbackQuery();
 });
+
+/* ================= DAILY COFFEE REMINDER ================= */
+
+async function sendDailyCoffeeReminder() {
+    const users = await getAllUsersFromDB();
+
+    for (const user of users) {
+        try {
+            await bot.api.sendMessage(
+                user.id,
+                "☕ *Поддержите проект*\n\n" +
+                "Если бот оказался полезным — вы можете угостить меня кофе ☺️\n\n" +
+                "Это помогает развивать сервис и поддерживать его стабильную работу.",
+                { parse_mode: "Markdown" }
+            );
+        } catch (err) {
+            console.error(`Ошибка отправки пользователю ${user.id}:`, err.message);
+        }
+    }
+}
+
+cron.schedule(
+    "0 20 * * *",
+    () => {
+        console.log("☕ Ежедневное напоминание о донате отправлено");
+        sendDailyCoffeeReminder();
+    },
+    {
+        timezone: "Europe/Moscow",
+    }
+);
 
 /* ================= BOT LAUNCH ================= */
 
