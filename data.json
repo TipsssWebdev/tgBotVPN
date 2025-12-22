@@ -72,7 +72,13 @@
       "keyVl": "vless://08b293ee-91ea-4ebf-adb3-acc7e65dd236@83.147.192.250:14265?type=xhttp&path=%2F&host=&mode=auto&security=reality&pbk=SHlx8bLKurebDLEyBo2sxe-xkX7y--i3G12MZZaH5VE&fp=chrome&sni=max.ru&sid=ef865a72&spx=%2F#Lorsic",
       "name": "Lorsic"
     },
-    "228": {
+    "12": {
+      "id": "878649104",
+      "keyHs": "hy2://poly:89wzmhtFfc2kRlzGJMP315EmfOsIMdtJ@144.31.112.53:1935?insecure=1&sni=yahoo.com&obfs=salamander&obfs-password=Yz4IQBwiFoPoEF28a4HWoN5YIvMf4Z6v&pinSHA256=9E:D1:92:D0:96:43:85:F6:DD:EC:FB:47:43:9A:02:1A:9D:45:F0:F1:D8:64:14:FB:CC:DD:A5:0E:94:9F:17:66#poly-IPv4",
+      "keyVl": "vless://b99353ef-3d86-453b-9c9e-ee8bbf5b532d@83.147.192.250:34084?type=xhttp&path=%2F&host=&mode=auto&security=reality&pbk=QUu1cA1yUo1-kA-jWzdzlUXFKPTmJSZQjE0L4yX7fTc&fp=chrome&sni=max.ru&sid=f388feddef94ba&spx=%2F#Poly",
+      "name": "Poly"
+    },
+    "-1": {
       "id": "",
       "keyHs": "",
       "keyVl": "",
