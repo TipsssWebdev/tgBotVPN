@@ -221,7 +221,7 @@ async function sendDailyCoffeeReminder() {
 }
 
 cron.schedule(
-    "45 20 * * 1,3,5",
+    "42 20 * * 1,3,5",
     () => {
         console.log("☕ Напоминание о кофе (ПН/СР/ПТ)");
         sendDailyCoffeeReminder();
