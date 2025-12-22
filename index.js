@@ -165,9 +165,9 @@ async function sendDailyCoffeeReminder() {
 }
 
 cron.schedule(
-    "0 20 * * *",
+    "0 20 * * 1,3,5",
     () => {
-        console.log("☕ Ежедневное напоминание о донате отправлено");
+        console.log("☕ Напоминание о кофе (ПН/СР/ПТ)");
         sendDailyCoffeeReminder();
     },
     {
