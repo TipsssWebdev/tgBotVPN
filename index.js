@@ -1,9 +1,10 @@
 require("dotenv").config();
-const { Bot, InlineKeyboard } = require("grammy");
+const { Bot, InlineKeyboard, Keyboard } = require("grammy");
 
 const bot = new Bot(process.env.BOT_TOKEN);
 
-// ---------- HELPERS ----------
+/* ================= HELPERS ================= */
+
 async function getUserFromDB(telegramId) {
     const res = await fetch(
         "https://proxy-settings-ab0da-default-rtdb.europe-west1.firebasedatabase.app/users.json"
@@ -17,7 +18,8 @@ async function getUserFromDB(telegramId) {
     );
 }
 
-// ---------- ACCESS (ТОЛЬКО ДОВЕРЕННЫЕ) ----------
+/* ================= ACCESS ================= */
+
 bot.use(async (ctx, next) => {
     if (!ctx.from) return;
 
@@ -28,27 +30,38 @@ bot.use(async (ctx, next) => {
         return;
     }
 
-    // сохраняем пользователя для всех хендлеров
     ctx.dbUser = user;
-
     return next();
 });
 
-// ---------- /start ----------
-bot.command("start", async (ctx) => {
-    const keyboard = new InlineKeyboard()
-        .text("🔐 Получить прокси", "GET_PROXY")
-        .row()
-        .text("☕ Купить мне кофе", "BUY_COFFEE");
+/* ================= KEYBOARDS ================= */
 
+const mainMenuKeyboard = new Keyboard()
+    .text("🔐 Получить прокси")
+    .row()
+    .text("☕ Купить мне кофе")
+    .resized();
+
+/* ================= COMMANDS MENU ================= */
+
+bot.api.setMyCommands([
+    { command: "start", description: "Запустить бота и открыть меню" },
+    { command: "proxy", description: "Получить прокси / ключи" },
+    { command: "coffee", description: "Поддержать проект ☕" },
+]);
+
+/* ================= /start ================= */
+
+bot.command("start", async (ctx) => {
     await ctx.reply(
-        "Привет! 👋\nВыберите действие:",
-        { reply_markup: keyboard }
+        "Привет! 👋\n\nВыберите действие:",
+        { reply_markup: mainMenuKeyboard }
     );
 });
 
-// ---------- GET_PROXY ----------
-bot.callbackQuery("GET_PROXY", async (ctx) => {
+/* ================= REPLY BUTTONS ================= */
+
+bot.hears("🔐 Получить прокси", async (ctx) => {
     const keyboard = new InlineKeyboard()
         .text("🔑 Ключ Hysteria2", "GET_HYSTERIA")
         .row()
@@ -65,11 +78,23 @@ bot.callbackQuery("GET_PROXY", async (ctx) => {
     await ctx.reply("Выберите протокол:", {
         reply_markup: keyboard,
     });
-
-    await ctx.answerCallbackQuery();
 });
 
-// ---------- GET_HYSTERIA ----------
+bot.hears("☕ Купить мне кофе", async (ctx) => {
+    const keyboard = new InlineKeyboard()
+        .text("T-Bank", "TBANK")
+        .row()
+        .text("Yandex-bank", "YABANK")
+        .row()
+        .text("Alfa-bank", "ALFA");
+
+    await ctx.reply("Выберите банк:", {
+        reply_markup: keyboard,
+    });
+});
+
+/* ================= CALLBACKS ================= */
+
 bot.callbackQuery("GET_HYSTERIA", async (ctx) => {
     const { keyHs } = ctx.dbUser;
 
@@ -82,7 +107,6 @@ bot.callbackQuery("GET_HYSTERIA", async (ctx) => {
     await ctx.answerCallbackQuery();
 });
 
-// ---------- GET_VLESS ----------
 bot.callbackQuery("GET_VLESS", async (ctx) => {
     const { keyVl } = ctx.dbUser;
 
@@ -95,43 +119,29 @@ bot.callbackQuery("GET_VLESS", async (ctx) => {
     await ctx.answerCallbackQuery();
 });
 
-// ---------- BUY_COFFEE ----------
-bot.callbackQuery("BUY_COFFEE", async (ctx) => {
-    const keyboard = new InlineKeyboard()
-        .text("T-Bank","TBANK")
-        .row()
-        .text("Yandex-bank", "YABANK")
-        .row()
-        .text("Alfa-bank", "ALFA");
+/* ================= BUY COFFEE ================= */
 
-    await ctx.reply("Выберите банк:", {
-        reply_markup: keyboard,
-    });
-
-    await ctx.answerCallbackQuery();
-})
-
-// ---------- TBANK ----------
 bot.callbackQuery("TBANK", async (ctx) => {
-
-    await ctx.reply("💳 T-Bank \n \n 2200 7001 6398 3629")
-
+    await ctx.reply("💳 *T-Bank*\n\n`2200 7001 6398 3629`", {
+        parse_mode: "Markdown",
+    });
     await ctx.answerCallbackQuery();
-})
-// ---------- YABANK ----------
+});
+
 bot.callbackQuery("YABANK", async (ctx) => {
-
-    await ctx.reply("💳 Ya-Bank \n \n 2204 3110 2980 8046")
-
+    await ctx.reply("💳 *Yandex Bank*\n\n`2204 3110 2980 8046`", {
+        parse_mode: "Markdown",
+    });
     await ctx.answerCallbackQuery();
-})
-// ---------- ALFA ----------
+});
+
 bot.callbackQuery("ALFA", async (ctx) => {
-
-    await ctx.reply("💳 Alfa-bank \n \n 2200 1545 0127 6777")
-
+    await ctx.reply("💳 *Alfa-Bank*\n\n`2200 1545 0127 6777`", {
+        parse_mode: "Markdown",
+    });
     await ctx.answerCallbackQuery();
-})
+});
 
-// ---------- BOT LAUNCH ----------
+/* ================= BOT LAUNCH ================= */
+
 bot.start();
