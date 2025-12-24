@@ -315,8 +315,8 @@ bot.on("message:text", async (ctx) => {
                 "🧾 *Новый пользователь*\n\n" +
                 `id: ${state.user.id}\n` +
                 `name: ${state.user.name}\n\n` +
-                `keyHs:\n${state.user.keyHs}\n\n` +
-                `keyVl:\n${state.user.keyVl}`,
+                `keyHs:\n\`${state.user.keyHs}\`\n\n` +
+                `keyVl:\n\`${state.user.keyVl}\``,
                 {
                     parse_mode: "Markdown",
                     reply_markup: createUserConfirmKeyboard(),
